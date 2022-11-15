@@ -5,7 +5,7 @@ const { errorHandler } = require('./middlewares/errorMiddleware');
 const cors = require('cors');
 const app = express();
 
-const allowedOrigins = ['https://ezamjeni.web.app',  'http://localhost:8100']
+const allowedOrigins = ['https://ezamjeni.web.app', 'https://ezamjeni.firebaseapp.com', 'http://localhost:8100']
 
 app.use(cors({
     origin: allowedOrigins
