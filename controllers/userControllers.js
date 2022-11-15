@@ -67,12 +67,34 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 //? Get my User, get to '/me'
+const getMe = asyncHandler(async (req, res) => {
+    const user = req.user;
+    if (!user) {
+        res.status(404).json({message: 'You are not logged in'});
+    } 
+    res.status(200).json({
+        id: user._id,
+        name: user.name,
+        email: user.email
+    });
+});
 
 //? Update my User, put to '/me'
 
 //? Get User by ID, get to '/:id'
+const getUserById = asyncHandler( async (req, res) => {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+        res.status(404).json({ message: 'User dooes not exist' })
+    }
+    
+    res.status(200).json({ name: user.name, email: user.email })
+});
 
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    getMe,
+    getUserById
 }
