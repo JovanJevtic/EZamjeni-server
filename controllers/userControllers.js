@@ -15,6 +15,7 @@ const generateToken = (id) => {
 //? Register User, post to '/'
 const registerUser = asyncHandler( async (req, res) => {
     const { verifTokenId, confirmToken } = req.body;
+    console.log(req.body.verifTokenId);
     const verifToken = await VerifToken.findById(verifTokenId);
 
     if (!verifToken) { 
@@ -143,7 +144,7 @@ const confirmEmail = asyncHandler( async (req, res) => {
 
         try {
             const sendResult = await transporter.sendMail(mailOptions);
-            res.status(200).json({ messageId: sendResult.messageId });
+            res.status(200).json({ verifTokenId: verifToken._id });
         } catch (error) {
             res.status(400);
             throw new Error(error);
