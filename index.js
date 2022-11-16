@@ -5,6 +5,9 @@ const { errorHandler } = require('./middlewares/errorMiddleware');
 const cors = require('cors');
 const app = express();
 
+const randomArray = (length, max) => [...new Array(length)]
+.map(() => Math.round(Math.random() * max));
+
 const allowedOrigins = ['https://ezamjeni.web.app', 'https://ezamjeni.firebaseapp.com', 'http://localhost:8100']
 
 app.use(cors({

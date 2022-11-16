@@ -3,12 +3,13 @@ const router = express.Router();
 
 const { protect } = require('../middlewares/authUser');
  
-const { registerUser, loginUser, getMe, getUserById } = require('../controllers/userControllers');
+const { registerUser, loginUser, getMe, getUserById, confirmEmail } = require('../controllers/userControllers');
 
 router.post('/', registerUser);
 router.post('/login', loginUser);
-// router.get('/confirmation/:email/:token', confirmEmail);
-// router.post('/confirmation/resendEmail', resendEmail );
+
+router.post('/confirmEmail', confirmEmail);
+
 // router.put('/me')
 router.get('/me', protect, getMe);
 router.get('/:id', getUserById);
