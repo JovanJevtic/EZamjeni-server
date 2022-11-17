@@ -15,7 +15,6 @@ const generateToken = (id) => {
 //? Register User, post to '/'
 const registerUser = asyncHandler( async (req, res) => {
     const { verifTokenId, confirmToken } = req.body;
-    console.log(req.body.verifTokenId);
     const verifToken = await VerifToken.findById(verifTokenId);
 
     if (!verifToken) { 
@@ -138,8 +137,8 @@ const confirmEmail = asyncHandler( async (req, res) => {
         const mailOptions = { 
             from: process.env.NODEMAILER_AUTH_EMAIL, 
             to: email,     
-            subject: 'Account Verification Link', 
-            html: 'Hello '+ name +',\n\n' + 'Your verification number is ' + verifToken.token  + '\n\nThank You!\n' 
+            subject: 'Account Verification Code', 
+            html: 'Hello '+ name +',\n\n' + 'Your verification number is ' + verifToken.token  + '\n\n, Thank You!\n' 
         };
 
         try {
@@ -155,10 +154,52 @@ const confirmEmail = asyncHandler( async (req, res) => {
     }
 });
 
+const resendEmail = asyncHandler( async (req, res) => {
+    const { verifTokenId } = req.body;
+
+    const verifToken = await VerifToken.findById(verifTokenId);
+    if (!verifToken) { 
+        res.status(400);
+        throw new Error('Something went wrong, please try again!');
+    }
+
+    const token = verifToken.token;
+
+    try {
+        const transporter = nodemailer.createTransport({ 
+            service: 'gmail',
+            auth: { 
+                user: process.env.NODEMAILER_AUTH_EMAIL, 
+                pass: process.env.NODEMAILER_AUTH_PWD
+            } 
+        });
+
+        const mailOptions = { 
+            from: process.env.NODEMAILER_AUTH_EMAIL, 
+            to: verifToken.email,     
+            subject: 'Account Verification Code', 
+            html: 'Hello '+ verifToken.name +',\n\n' + 'Your verification number is ' + token + '\n\n, Thank You!\n' 
+        };
+
+        try {
+            const sendResult = await transporter.sendMail(mailOptions);
+            res.status(200).json({ verifTokenId: verifToken._id });
+        } catch (error) {
+            res.status(400);
+            throw new Error(error);
+        }
+    } catch (err) {
+        res.status(400);
+        throw new Error(err);
+    }
+
+});
+
 module.exports = {
     registerUser,
     loginUser,
     getMe,
     getUserById,
-    confirmEmail
+    confirmEmail,
+    resendEmail
 }
